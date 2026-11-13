@@ -112,8 +112,9 @@ dl.glossary div.flash,dl.glossary div:target{background:color-mix(in srgb,var(--
 /* principles */
 .principles{display:flex;flex-direction:column;gap:1rem;margin:.5rem 0}
 .principle{display:grid;grid-template-columns:4.2rem minmax(0,1fr);gap:1.1rem;padding:1.3rem 1.3rem 1.3rem 1rem;background:var(--paper-2);border-radius:3px}
-.principle .R{font-family:var(--font-head);font-weight:800;font-size:3.6rem;line-height:.9;color:var(--marigold);text-align:center;position:relative}
-.principle .R::after{content:"";position:absolute;left:50%;top:1.65rem;width:3.6rem;height:3.6rem;transform:translate(-50%,-50%);border:2px solid var(--marigold);border-radius:50%;opacity:.45}
+.principle .R{position:relative;width:4.4rem;height:4.4rem;display:grid;place-items:center;margin-top:-.35rem}
+.principle .R canvas{position:absolute;inset:-.5rem;width:calc(100% + 1rem);height:calc(100% + 1rem)}
+.principle .R span{position:relative;font-family:var(--font-head);font-weight:800;font-size:2.1rem;line-height:1;color:var(--ink)}
 .principle h3{margin:0 0 .35rem;font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase}
 .principle .tag{display:inline-block;margin-top:.6rem;font-family:var(--font-head);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
 .principle p+p{margin-top:.7rem}
@@ -304,7 +305,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
   <p><strong>Drie principes zijn geïdentificeerd voor de uitbreiding van onderzoeksethiek om beter tegemoet te komen aan de toetsing van participatief (actie)onderzoek.</strong> Deze principes zijn ook bruikbaar als uitbreiding op de ethische toetsing van andere vormen van sociaal en gedragsonderzoek. Ze laten eveneens zien dat onderzoeksethiek een samenspel is tussen commissie, onderzoekers en betrokken mensen. Onderzoeksethiek beoogt te zijn:</p>
   <div class="principles">
     <article class="principle">
-      <div class="R" aria-hidden="true">1</div>
+      <div class="R" aria-hidden="true"><canvas data-art="badge" data-c="1" data-seed="4131"></canvas><span>1</span></div>
       <div>
         <h3>Relationeel</h3>
         <p>Breid de grondslagen van ethische toetsing door commissies uit met de principes van zorgethiek. Deze sluiten beter aan bij het relationele en betrokken karakter van onderzoek waarbij nauw met mensen wordt (samen)gewerkt.</p>
@@ -312,7 +313,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
       </div>
     </article>
     <article class="principle">
-      <div class="R" aria-hidden="true">2</div>
+      <div class="R" aria-hidden="true"><canvas data-art="badge" data-c="2" data-seed="4262"></canvas><span>2</span></div>
       <div>
         <h3>Reflectief</h3>
         <p>De huidige toetsingspraktijk doet geen recht aan ethische kwesties die voorkomen bij intensieve samenwerking tussen onderzoekers en betrokken mensen in de praktijk. Deze worden ook wel gesitueerde en alledaagse ethiek genoemd. Dit zijn vaak kleine, onbewuste morele keuzes die onderzoekers maken over samenwerking, luisteren, beslissen, afspreken, eerlijk zijn, etc. – zonder dat deze altijd worden gezien als ethische kwesties in de huidige onderzoeksethiek.</p>
@@ -321,7 +322,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
       </div>
     </article>
     <article class="principle">
-      <div class="R" aria-hidden="true">3</div>
+      <div class="R" aria-hidden="true"><canvas data-art="badge" data-c="3" data-seed="4393"></canvas><span>3</span></div>
       <div>
         <h3>Rechtvaardig(er)</h3>
         <p>De ethische grondslagen van participatief (actie)onderzoek vragen een breder begrip van rechtvaardigheid dan nu is geoperationaliseerd in het Belmont-rapport. Daar is rechtvaardigheid met name gericht op de bescherming van individuele deelnemers: wie draagt de risico’s, en worden kwetsbare groepen niet onevenredig belast?</p>
@@ -887,18 +888,24 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
     quiet:function(ctx,W,H,R,c){
       for(var i=0;i<14;i++){var r=Math.min(W,H)*(0.03+R()*0.12);ring(ctx,R,W*(0.3+R()*0.7),H*R(),r,R()<0.2?c.gold:c.light,1.2,0.6)}
     },
+    badge:function(ctx,W,H,R,c,cv){
+      var cx=W/2, cy=H/2, r=Math.min(W,H)*0.36, col=PAL[(+cv.dataset.c-1)%PAL.length];
+      ring(ctx,R,cx,cy,r,col,2.6,1.5);
+      ring(ctx,R,cx+r*0.05,cy-r*0.04,r*1.04,c.gold,1.4,0.6);
+    },
     footer:function(ctx,W,H,R,c){
       for(var i=0;i<8;i++){var r=Math.min(W,H)*(0.1+R()*0.3);ring(ctx,R,W*(0.55+R()*0.5),H*R(),r,R()<0.3?c.gold:c.light,1.2,0.5)}
     }
   };
 
   var canvases=[].slice.call(document.querySelectorAll('canvas[data-art]'));
-  function draw(cv,i){
+  var artIdx=0;canvases.forEach(function(cv){if(!cv.dataset.seed)cv.dataset.idx=artIdx++});
+  function draw(cv){
     var box=cv.getBoundingClientRect(), W=Math.max(1,box.width), H=Math.max(1,box.height), dpr=Math.min(2,window.devicePixelRatio||1);
     cv.width=Math.round(W*dpr);cv.height=Math.round(H*dpr);
     var ctx=cv.getContext('2d');ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
     var kind=cv.dataset.art, fn=ART[kind]||ART.quiet;
-    fn(ctx,W,H,rng(1301+i*7919),tokens());
+    fn(ctx,W,H,rng(cv.dataset.seed?+cv.dataset.seed:1301+(+cv.dataset.idx)*7919),tokens(),cv);
   }
   function drawAll(){canvases.forEach(draw)}
   drawAll();
