@@ -8,7 +8,7 @@
 <meta name="description" content="Position paper van de Ethics Retreat 2025–2026: voorstel voor de uitbreiding van ethische toetsing van onderzoek, vanwege de toename van participatief (actie)onderzoek.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Schibsted+Grotesk:wght@500;700;800&family=Caveat+Brush&display=swap">
 <style>
 /* Layout: a dark "night" hero with hand-drawn ink rings, then a single reading column on paper.
    Each proposal opens with a full-width ink-ring band; the contents open as a sheet from the right. */
@@ -889,50 +889,20 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
       for(var i=0;i<14;i++){var r=Math.min(W,H)*(0.03+R()*0.12);ring(ctx,R,W*(0.3+R()*0.7),H*R(),r,R()<0.2?c.gold:c.light,1.2,0.6)}
     },
     badge:function(ctx,W,H,R,c,cv){
-      // hand-drawn human signs: heart (relationeel), head (reflectief), hand (rechtvaardig(er))
-      var k=+cv.dataset.c, m=Math.min(W,H), ox=(W-m)/2, oy=(H-m)/2;
-      function P(x,y){return [ox+x*m, oy+y*m]}
-      // smooth Catmull-Rom path through points, drawn as several jittered brush passes
-      function brush(pts,color,w,passes,closed,fill){
-        ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineCap='round';ctx.lineJoin='round';
-        for(var i=0;i<passes;i++){
-          var j=m*0.018, q=pts.map(function(p){return [p[0]+(R()-0.5)*j,p[1]+(R()-0.5)*j]});
-          if(closed)q=q.concat([q[0],q[1],q[2]]);
-          ctx.globalAlpha=fill?0.12+R()*0.12:0.28+R()*0.45;ctx.lineWidth=w*(0.45+R()*1.0);
-          ctx.beginPath();ctx.moveTo(q[0][0],q[0][1]);
-          for(var n=0;n<q.length-1;n++){
-            var p0=q[Math.max(0,n-1)],p1=q[n],p2=q[n+1],p3=q[Math.min(q.length-1,n+2)];
-            ctx.bezierCurveTo(p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1]);
-          }
-          fill?ctx.fill():ctx.stroke();
-        }
-        ctx.globalAlpha=1;
+      // hand-written digit, built up from several jittered brush passes like the ink rings
+      var col=PAL[(+cv.dataset.c-1)%PAL.length], size=Math.min(W,H)*0.92, txt=cv.dataset.c;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=size+'px "Caveat Brush", "Segoe Print", "Bradley Hand", cursive';
+      ctx.fillStyle=col;ctx.strokeStyle=col;ctx.lineJoin='round';
+      for(var k=0;k<9;k++){
+        ctx.save();
+        ctx.translate(W/2+(R()-0.5)*size*0.06, H*0.54+(R()-0.5)*size*0.06);
+        ctx.rotate(-0.08+(R()-0.5)*0.06);
+        ctx.globalAlpha=0.22+R()*0.3;
+        if(k%3===2){ctx.lineWidth=1+R()*1.5;ctx.strokeText(txt,0,0)}else ctx.fillText(txt,0,0);
+        ctx.restore();
       }
-      var w=m*0.035;
-      if(k===1){ // hart met een zwierige uithaal
-        var pts=[];for(var t=0;t<=Math.PI*2+0.001;t+=Math.PI/14){
-          var x=16*Math.pow(Math.sin(t),3), y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
-          pts.push(P(0.5+x*0.021,0.47-y*0.021));}
-        brush(pts,PAL[1],w*0.9,3,true,true);
-        brush(pts,PAL[1],w,7,true);
-        brush([P(0.5,0.84),P(0.43,0.93),P(0.30,0.95),P(0.18,0.88)],c.gold,w*0.8,4);
-        brush([P(0.70,0.30),P(0.76,0.24),P(0.84,0.22)],c.gold,w*0.6,3);
-      }else if(k===2){ // hoofd in profiel met een gedachte-spiraal
-        var head=[P(0.36,0.98),P(0.34,0.80),P(0.21,0.63),P(0.19,0.40),P(0.29,0.18),P(0.49,0.07),P(0.68,0.11),P(0.79,0.26),P(0.80,0.42),P(0.89,0.55),P(0.82,0.60),P(0.84,0.66),P(0.81,0.70),P(0.83,0.75),P(0.78,0.82),P(0.68,0.84),P(0.66,0.98)];
-        brush(head,PAL[0],w,7,false);
-        var sp=[];for(var a=0;a<=Math.PI*4.2;a+=0.35){var r=0.015+a*0.0115;sp.push(P(0.47+Math.cos(a)*r,0.42+Math.sin(a)*r));}
-        brush(sp,c.gold,w*0.7,4,false);
-      }else{ // opgestoken open hand
-        brush([P(0.32,0.58),P(0.36,0.80),P(0.50,0.86),P(0.64,0.80),P(0.68,0.60),P(0.60,0.50),P(0.42,0.50)],PAL[2],w,4,true,true);
-        var fw=m*0.07;
-        brush([P(0.35,0.56),P(0.33,0.40),P(0.32,0.26)],PAL[2],fw,4,false);
-        brush([P(0.45,0.52),P(0.45,0.30),P(0.45,0.13)],PAL[2],fw,4,false);
-        brush([P(0.55,0.52),P(0.57,0.32),P(0.58,0.15)],PAL[2],fw,4,false);
-        brush([P(0.64,0.56),P(0.67,0.42),P(0.69,0.30)],PAL[2],fw,4,false);
-        brush([P(0.66,0.72),P(0.76,0.62),P(0.85,0.50)],PAL[2],fw,4,false);
-        brush([P(0.30,0.66),P(0.36,0.84),P(0.50,0.90),P(0.66,0.84),P(0.72,0.66)],c.gold,w*0.6,3,false);
-        brush([P(0.20,0.20),P(0.15,0.14)],c.gold,w*0.6,2,false);brush([P(0.14,0.32),P(0.06,0.31)],c.gold,w*0.6,2,false);
-      }
+      ctx.globalAlpha=1;
     },
     footer:function(ctx,W,H,R,c){
       for(var i=0;i<8;i++){var r=Math.min(W,H)*(0.1+R()*0.3);ring(ctx,R,W*(0.55+R()*0.5),H*R(),r,R()<0.3?c.gold:c.light,1.2,0.5)}
@@ -949,6 +919,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
     fn(ctx,W,H,rng(cv.dataset.seed?+cv.dataset.seed:1301+(+cv.dataset.idx)*7919),tokens(),cv);
   }
   function drawAll(){canvases.forEach(draw)}
+  try{document.fonts.load('40px "Caveat Brush"').then(function(){canvases.forEach(function(cv){if(cv.dataset.art==='badge')draw(cv)})})}catch(e){}
   drawAll();
   if('ResizeObserver' in window){
     var pending=null;
