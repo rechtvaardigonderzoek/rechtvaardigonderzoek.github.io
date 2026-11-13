@@ -59,6 +59,7 @@ strong{font-weight:600}
 /* ---------- hero ---------- */
 .hero{position:relative;background:var(--night);color:var(--night-ink);overflow:hidden}
 .hero canvas,.band canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+canvas[data-art]{max-height:100%}
 .hero-inner{position:relative;max-width:72rem;margin:0 auto;padding-left:var(--gutter-l);padding-right:var(--gutter-r);padding-block:clamp(3.5rem,9vw,7rem) clamp(7rem,14vw,10rem);display:flex;flex-direction:column;align-items:flex-start;gap:1rem}
 .eyebrow{font-family:var(--font-head);font-weight:700;font-size:.78rem;letter-spacing:.14em;text-transform:uppercase}
 .hero .eyebrow{color:var(--night-ink);opacity:.85}
@@ -142,6 +143,7 @@ dl.glossary div.flash,dl.glossary div:target{background:color-mix(in srgb,var(--
 .band .eyebrow{color:var(--night-ink);display:block;margin-bottom:.55rem;text-shadow:0 1px 8px var(--night)}
 .band h2{font-size:clamp(1.7rem,4.4vw,2.8rem);font-weight:800;line-height:1.36;max-width:22ch}
 .chapter .sheet-in{padding-top:3.4rem}
+.chapter.last .sheet-in{padding-bottom:5rem}
 
 /* figures */
 figure{margin:.8rem 0}
@@ -210,9 +212,6 @@ ol.notes li:target{background:var(--paper-2);outline:6px solid var(--paper-2)}
 .btn{font-family:var(--font-head);font-weight:700;font-size:.85rem;border:1.5px solid var(--ink);background:transparent;color:var(--ink);border-radius:999px;padding:.35rem .9rem;cursor:pointer}
 .btn:hover{background:var(--ink);color:var(--paper)}
 
-footer.end{background:var(--night);color:var(--night-ink);position:relative;overflow:hidden}
-footer.end .sheet-in{padding-block:3rem;font-family:var(--font-head);font-size:.9rem;gap:.5rem}
-footer.end a{color:var(--night-ink)}
 
 /* ---------- navigation ---------- */
 .toc-btn{position:fixed;z-index:30;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));font-family:var(--font-head);font-weight:800;font-size:.9rem;background:var(--marigold);color:var(--marigold-ink);border:0;border-radius:999px;padding:.6rem 1rem .6rem .85rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
@@ -737,7 +736,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
 </section>
 
 <!-- ================= ACHTERGROND ================= -->
-<section class="chapter" id="begrippen">
+<section class="chapter last" id="begrippen">
   <div class="band"><canvas data-art="quiet" aria-hidden="true"></canvas>
     <div class="band-inner"><span class="eyebrow">Achtergrond</span><h2><span class="label">Begrippenlijst</span></h2></div>
   </div>
@@ -795,14 +794,6 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
 </section>
 </main>
 
-<footer class="end">
-  <canvas data-art="footer" aria-hidden="true"></canvas>
-  <div class="sheet" style="position:relative"><div class="sheet-in">
-    <p><strong>Relationele, reflectieve en rechtvaardige(re) onderzoeksethiek</strong></p>
-    <p>Position paper · Ethics Retreat 2025–2026 · Versie 30 oktober 2026</p>
-    <p><a href="#top">Terug naar boven ↑</a></p>
-  </div></div>
-</footer>
 
 <script>
 (function(){
