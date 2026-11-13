@@ -889,32 +889,49 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
       for(var i=0;i<14;i++){var r=Math.min(W,H)*(0.03+R()*0.12);ring(ctx,R,W*(0.3+R()*0.7),H*R(),r,R()<0.2?c.gold:c.light,1.2,0.6)}
     },
     badge:function(ctx,W,H,R,c,cv){
-      // a small brushed sign per principle, in the same ink-ring hand as the artwork
-      var k=+cv.dataset.c, col=PAL[(k-1)%PAL.length], m=Math.min(W,H), cx=W/2, cy=H/2;
-      function line(x1,y1,x2,y2,w,color){
-        ctx.strokeStyle=color;ctx.lineCap='round';
-        for(var i=0;i<5;i++){
-          ctx.globalAlpha=0.3+R()*0.45;ctx.lineWidth=w*(0.5+R()*0.9);
-          var j=m*0.015;ctx.beginPath();ctx.moveTo(x1+(R()-0.5)*j,y1+(R()-0.5)*j);ctx.lineTo(x2+(R()-0.5)*j,y2+(R()-0.5)*j);ctx.stroke();
+      // hand-drawn human signs: heart (relationeel), head (reflectief), hand (rechtvaardig(er))
+      var k=+cv.dataset.c, m=Math.min(W,H), ox=(W-m)/2, oy=(H-m)/2;
+      function P(x,y){return [ox+x*m, oy+y*m]}
+      // smooth Catmull-Rom path through points, drawn as several jittered brush passes
+      function brush(pts,color,w,passes,closed,fill){
+        ctx.strokeStyle=color;ctx.fillStyle=color;ctx.lineCap='round';ctx.lineJoin='round';
+        for(var i=0;i<passes;i++){
+          var j=m*0.018, q=pts.map(function(p){return [p[0]+(R()-0.5)*j,p[1]+(R()-0.5)*j]});
+          if(closed)q=q.concat([q[0],q[1],q[2]]);
+          ctx.globalAlpha=fill?0.12+R()*0.12:0.28+R()*0.45;ctx.lineWidth=w*(0.45+R()*1.0);
+          ctx.beginPath();ctx.moveTo(q[0][0],q[0][1]);
+          for(var n=0;n<q.length-1;n++){
+            var p0=q[Math.max(0,n-1)],p1=q[n],p2=q[n+1],p3=q[Math.min(q.length-1,n+2)];
+            ctx.bezierCurveTo(p1[0]+(p2[0]-p0[0])/6,p1[1]+(p2[1]-p0[1])/6,p2[0]-(p3[0]-p1[0])/6,p2[1]-(p3[1]-p1[1])/6,p2[0],p2[1]);
+          }
+          fill?ctx.fill():ctx.stroke();
         }
         ctx.globalAlpha=1;
       }
-      if(k===1){ // Relationeel: two rings holding on to each other
-        var r=m*0.22;
-        ring(ctx,R,cx-r*0.62,cy,r,col,2.4,1.3);
-        ring(ctx,R,cx+r*0.62,cy,r,c.gold,2.4,1.3);
-      }else if(k===2){ // Reflectief: a ring and its mirror image under a waterline
-        var r2=m*0.17, wy=cy+m*0.06;
-        ring(ctx,R,cx,wy-r2*1.12,r2,col,2.4,1.3);
-        line(cx-m*0.34,wy,cx+m*0.34,wy,2,c.gold);
-        ctx.save();ctx.globalAlpha=0.45;ring(ctx,R,cx,wy+r2*0.72,r2*0.62,col,1.6,0.8);ctx.restore();
-      }else{ // Rechtvaardig(er): a balance with two equal weights
-        var bx=m*0.32, by=cy-m*0.12, r3=m*0.11;
-        line(cx,by-m*0.04,cx,cy+m*0.3,2.2,c.gold);
-        line(cx-m*0.14,cy+m*0.3,cx+m*0.14,cy+m*0.3,2.2,c.gold);
-        line(cx-bx,by,cx+bx,by,2.2,col);
-        ring(ctx,R,cx-bx,by+r3*1.35,r3,col,2,1.1);
-        ring(ctx,R,cx+bx,by+r3*1.35,r3,col,2,1.1);
+      var w=m*0.035;
+      if(k===1){ // hart met een zwierige uithaal
+        var pts=[];for(var t=0;t<=Math.PI*2+0.001;t+=Math.PI/14){
+          var x=16*Math.pow(Math.sin(t),3), y=13*Math.cos(t)-5*Math.cos(2*t)-2*Math.cos(3*t)-Math.cos(4*t);
+          pts.push(P(0.5+x*0.021,0.47-y*0.021));}
+        brush(pts,PAL[1],w*0.9,3,true,true);
+        brush(pts,PAL[1],w,7,true);
+        brush([P(0.5,0.84),P(0.43,0.93),P(0.30,0.95),P(0.18,0.88)],c.gold,w*0.8,4);
+        brush([P(0.70,0.30),P(0.76,0.24),P(0.84,0.22)],c.gold,w*0.6,3);
+      }else if(k===2){ // hoofd in profiel met een gedachte-spiraal
+        var head=[P(0.36,0.98),P(0.34,0.80),P(0.21,0.63),P(0.19,0.40),P(0.29,0.18),P(0.49,0.07),P(0.68,0.11),P(0.79,0.26),P(0.80,0.42),P(0.89,0.55),P(0.82,0.60),P(0.84,0.66),P(0.81,0.70),P(0.83,0.75),P(0.78,0.82),P(0.68,0.84),P(0.66,0.98)];
+        brush(head,PAL[0],w,7,false);
+        var sp=[];for(var a=0;a<=Math.PI*4.2;a+=0.35){var r=0.015+a*0.0115;sp.push(P(0.47+Math.cos(a)*r,0.42+Math.sin(a)*r));}
+        brush(sp,c.gold,w*0.7,4,false);
+      }else{ // opgestoken open hand
+        brush([P(0.32,0.58),P(0.36,0.80),P(0.50,0.86),P(0.64,0.80),P(0.68,0.60),P(0.60,0.50),P(0.42,0.50)],PAL[2],w,4,true,true);
+        var fw=m*0.07;
+        brush([P(0.35,0.56),P(0.33,0.40),P(0.32,0.26)],PAL[2],fw,4,false);
+        brush([P(0.45,0.52),P(0.45,0.30),P(0.45,0.13)],PAL[2],fw,4,false);
+        brush([P(0.55,0.52),P(0.57,0.32),P(0.58,0.15)],PAL[2],fw,4,false);
+        brush([P(0.64,0.56),P(0.67,0.42),P(0.69,0.30)],PAL[2],fw,4,false);
+        brush([P(0.66,0.72),P(0.76,0.62),P(0.85,0.50)],PAL[2],fw,4,false);
+        brush([P(0.30,0.66),P(0.36,0.84),P(0.50,0.90),P(0.66,0.84),P(0.72,0.66)],c.gold,w*0.6,3,false);
+        brush([P(0.20,0.20),P(0.15,0.14)],c.gold,w*0.6,2,false);brush([P(0.14,0.32),P(0.06,0.31)],c.gold,w*0.6,2,false);
       }
     },
     footer:function(ctx,W,H,R,c){
