@@ -8,7 +8,7 @@
 <meta name="description" content="Position paper van de Ethics Retreat 2025–2026: voorstel voor de uitbreiding van ethische toetsing van onderzoek, vanwege de toename van participatief (actie)onderzoek.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Schibsted+Grotesk:wght@500;700;800&family=Caveat+Brush&display=swap">
 <style>
 /* Layout: a dark "night" hero with hand-drawn ink rings, then a single reading column on paper.
    Each proposal opens with a full-width ink-ring band; the contents open as a sheet from the right. */
@@ -114,7 +114,7 @@ dl.glossary div.flash,dl.glossary div:target{background:color-mix(in srgb,var(--
 .principle{display:grid;grid-template-columns:4.2rem minmax(0,1fr);gap:1.1rem;padding:1.3rem 1.3rem 1.3rem 1rem;background:var(--paper-2);border-radius:3px}
 .principle .R{position:relative;width:4.4rem;height:4.4rem;display:grid;place-items:center;margin-top:-.35rem}
 .principle .R canvas{position:absolute;inset:-.5rem;width:calc(100% + 1rem);height:calc(100% + 1rem)}
-.principle .R span{position:relative;font-family:var(--font-head);font-weight:800;font-size:2.1rem;line-height:1;color:var(--ink)}
+.principle .R span{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
 .principle h3{margin:0 0 .35rem;font-size:1.25rem;letter-spacing:.04em;text-transform:uppercase}
 .principle .tag{display:inline-block;margin-top:.6rem;font-family:var(--font-head);font-size:.78rem;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-soft)}
 .principle p+p{margin-top:.7rem}
@@ -889,9 +889,20 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
       for(var i=0;i<14;i++){var r=Math.min(W,H)*(0.03+R()*0.12);ring(ctx,R,W*(0.3+R()*0.7),H*R(),r,R()<0.2?c.gold:c.light,1.2,0.6)}
     },
     badge:function(ctx,W,H,R,c,cv){
-      var cx=W/2, cy=H/2, r=Math.min(W,H)*0.36, col=PAL[(+cv.dataset.c-1)%PAL.length];
-      ring(ctx,R,cx,cy,r,col,2.6,1.5);
-      ring(ctx,R,cx+r*0.05,cy-r*0.04,r*1.04,c.gold,1.4,0.6);
+      // hand-written digit, built up from several jittered brush passes like the ink rings
+      var col=PAL[(+cv.dataset.c-1)%PAL.length], size=Math.min(W,H)*0.92, txt=cv.dataset.c;
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.font=size+'px "Caveat Brush", "Segoe Print", "Bradley Hand", cursive';
+      ctx.fillStyle=col;ctx.strokeStyle=col;ctx.lineJoin='round';
+      for(var k=0;k<9;k++){
+        ctx.save();
+        ctx.translate(W/2+(R()-0.5)*size*0.06, H*0.54+(R()-0.5)*size*0.06);
+        ctx.rotate(-0.08+(R()-0.5)*0.06);
+        ctx.globalAlpha=0.22+R()*0.3;
+        if(k%3===2){ctx.lineWidth=1+R()*1.5;ctx.strokeText(txt,0,0)}else ctx.fillText(txt,0,0);
+        ctx.restore();
+      }
+      ctx.globalAlpha=1;
     },
     footer:function(ctx,W,H,R,c){
       for(var i=0;i<8;i++){var r=Math.min(W,H)*(0.1+R()*0.3);ring(ctx,R,W*(0.55+R()*0.5),H*R(),r,R()<0.3?c.gold:c.light,1.2,0.5)}
@@ -908,6 +919,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
     fn(ctx,W,H,rng(cv.dataset.seed?+cv.dataset.seed:1301+(+cv.dataset.idx)*7919),tokens(),cv);
   }
   function drawAll(){canvases.forEach(draw)}
+  try{document.fonts.load('40px "Caveat Brush"').then(function(){canvases.forEach(function(cv){if(cv.dataset.art==='badge')draw(cv)})})}catch(e){}
   drawAll();
   if('ResizeObserver' in window){
     var pending=null;
