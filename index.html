@@ -11,7 +11,7 @@
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,600;1,7..72,400&family=Schibsted+Grotesk:wght@500;700;800&display=swap">
 <style>
 /* Layout: a dark "night" hero with hand-drawn ink rings, then a single reading column on paper.
-   Each proposal opens with a full-width ink-ring band; the contents float as a rail (wide) or a sheet (narrow). */
+   Each proposal opens with a full-width ink-ring band; the contents open as a sheet from the right. */
 :root{
   --paper:#f4f2ec;
   --paper-2:#e9e5da;
@@ -229,12 +229,6 @@ nav.toc a{display:grid;grid-template-columns:1.4rem minmax(0,1fr);gap:.3rem;padd
 nav.toc a .n{color:var(--ink-soft);font-size:.8rem}
 nav.toc a:hover{border-left-color:var(--rule)}
 nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700}
-.rail{display:none}
-@media (min-width:1260px){
-  .rail{display:block;position:fixed;z-index:20;top:calc(5rem + env(safe-area-inset-top,0px));left:max(1.5rem,calc((100vw - 76rem)/2));width:15rem;max-height:calc(100vh - 7rem);overflow-y:auto;background:color-mix(in srgb,var(--paper) 94%,transparent);border:1px solid var(--rule);border-radius:4px;padding:1rem 1rem .2rem;opacity:0;pointer-events:none;transition:opacity .25s}
-  .rail.show{opacity:1;pointer-events:auto}
-  .toc-btn.hide-wide{display:none}
-}
 </style>
 </head>
 <body>
@@ -245,7 +239,6 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Inhoud
 </button>
 
-<nav class="toc rail" id="rail" aria-label="Inhoud"></nav>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="toc-panel" id="tocPanel" aria-label="Inhoudsopgave" aria-hidden="true">
   <button class="btn close" id="tocClose">Sluiten</button>
@@ -918,8 +911,7 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
   new MutationObserver(drawAll).observe(document.documentElement,{attributes:true,attributeFilter:['data-theme']});
 
   /* ---------- table of contents ---------- */
-  var btn=document.getElementById('tocBtn'), panel=document.getElementById('tocPanel'), scrim=document.getElementById('scrim'), closeB=document.getElementById('tocClose'), rail=document.getElementById('rail');
-  rail.innerHTML=document.getElementById('tocNav').innerHTML;
+  var btn=document.getElementById('tocBtn'), panel=document.getElementById('tocPanel'), scrim=document.getElementById('scrim'), closeB=document.getElementById('tocClose');
   function setOpen(o){
     panel.classList.toggle('open',o);panel.setAttribute('aria-hidden',String(!o));
     btn.setAttribute('aria-expanded',String(o));scrim.hidden=!o;
@@ -945,9 +937,6 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
     if(y===lastY&&max===lastMax)return;
     lastY=y;lastMax=max;
     bar.style.width=(max>0?Math.min(100,Math.max(0,y/max*100)):0)+'%';
-    var pastHero=y>hero.offsetHeight-120;
-    rail.classList.toggle('show',pastHero);
-    btn.classList.toggle('hide-wide',pastHero);
     var cur=null, line=innerHeight*0.3;
     targets.forEach(function(t){if(t&&t.getBoundingClientRect().top<=line)cur=t.id});
     if(cur!==lastCur){lastCur=cur;links.forEach(function(a){a.setAttribute('aria-current',String(a.getAttribute('href')==='#'+cur))})}
