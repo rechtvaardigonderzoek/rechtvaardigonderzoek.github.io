@@ -218,6 +218,10 @@ ol.notes li:target{background:var(--paper-2);outline:6px solid var(--paper-2)}
 /* ---------- navigation ---------- */
 .toc-btn{position:fixed;z-index:30;top:calc(14px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));font-family:var(--font-head);font-weight:800;font-size:.9rem;background:var(--marigold);color:var(--marigold-ink);border:0;border-radius:999px;padding:.6rem 1rem .6rem .85rem;display:flex;align-items:center;gap:.5rem;cursor:pointer;box-shadow:0 6px 18px rgba(0,0,0,.25)}
 .toc-btn svg{width:18px;height:18px}
+.pdf-btn{position:fixed;z-index:30;top:calc(62px + env(safe-area-inset-top,0px));right:calc(14px + env(safe-area-inset-right,0px));font-family:var(--font-head);font-weight:800;font-size:.9rem;background:var(--paper);color:var(--ink);border:2px solid var(--marigold);border-radius:999px;padding:.45rem .95rem .45rem .8rem;display:flex;align-items:center;gap:.45rem;text-decoration:none;box-shadow:0 6px 18px rgba(0,0,0,.18)}
+.pdf-btn svg{width:17px;height:17px;color:var(--marigold)}
+.pdf-btn:hover{background:var(--marigold);color:var(--marigold-ink)}
+.pdf-btn:hover svg{color:var(--marigold-ink)}
 .progress-track{position:fixed;z-index:29;top:env(safe-area-inset-top,0px);left:0;right:0;height:6px;background:color-mix(in srgb,var(--ink) 14%,var(--paper))}
 .progress{position:absolute;inset:0 auto 0 0;width:0;background:var(--marigold);border-radius:0 3px 3px 0;box-shadow:0 1px 4px color-mix(in srgb,var(--marigold) 45%,transparent)}
 .toc-panel{position:fixed;z-index:35;inset:0 0 0 auto;width:min(23rem,100vw);background:var(--paper);border-left:1px solid var(--rule);box-shadow:-20px 0 40px rgba(0,0,0,.25);padding:calc(1.2rem + env(safe-area-inset-top,0px)) calc(1.4rem + env(safe-area-inset-right,0px)) calc(1.4rem + env(safe-area-inset-bottom,0px)) 1.4rem;overflow-y:auto;transform:translateX(105%);transition:transform .28s ease;visibility:hidden}
@@ -241,6 +245,9 @@ nav.toc a[aria-current="true"]{border-left-color:var(--marigold);font-weight:700
   <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h10"/></svg>Inhoud
 </button>
 
+<a class="pdf-btn" id="pdfBtn" href="relationele-reflectieve-rechtvaardige-onderzoeksethiek.pdf" download="relationele-reflectieve-rechtvaardige-onderzoeksethiek.pdf" target="_blank" rel="noopener" aria-label="Download het position paper als PDF (30 pagina’s, 0,7 MB)">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 4v11M7 10l5 5 5-5M5 20h14"/></svg>PDF
+</a>
 <div class="scrim" id="scrim" hidden></div>
 <aside class="toc-panel" id="tocPanel" aria-label="Inhoudsopgave" aria-hidden="true">
   <button class="btn close" id="tocClose">Sluiten</button>
